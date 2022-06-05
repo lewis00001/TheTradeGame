@@ -1,0 +1,24 @@
+{
+  "name": "nodemysql",
+  "version": "1.0.0",
+  "description": "Sample app for using mysql with node",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "lewis Lockhart",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3",
+    "mysql": "^2.13.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lewis00001/mySQL_TradingGame.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lewis00001/mySQL_TradingGame/issues"
+  },
+  "homepage": "https://github.com/lewis00001/mySQL_TradingGame#readme",
+  "devDependencies": {}
+}
