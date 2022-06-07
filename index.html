@@ -13,12 +13,21 @@
     <script>
         let playerItems = document.getElementById('player-items');
         
-        let getPlayerItems = async function() {
-            const response = await fetch('/getTableData/player_items')
-            .then( data => data );
-            console.log(await response);
-        }
-        getPlayerItems();
+        // let getPlayerItems = async function() {
+        //     const response = await fetch('/getTableData/player_items');
+        //     console.log(response);
+        // }
+        // getPlayerItems();
+
+        
+        (async function() {
+            const res = await fetch('/getTableData/player_items');
+            const data = await res.json();
+            console.log(data.elements[0].Item);
+        })();
+
+        //fetch('/getTableData/player_items').then(res => res.json()).then(data => console.log(data));
+
     </script>
 </body>
 </html>

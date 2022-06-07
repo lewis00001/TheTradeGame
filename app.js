@@ -4,10 +4,12 @@ var path = require("path");
 
 // Create connection
 const db = mysql.createConnection({
+    //connectionLimit: 10,
     host     : 'localhost',
     user     : 'root',
     password : 'root',
     database : 'tradingGame'
+    //port: 8080
 });
 
 const C_PORT = "8080"; 
@@ -23,13 +25,16 @@ db.connect((err) => {
 const app = express();
 app.use(express.json({ limit: '1000kb' }));
 
+const router = express.Router();
+app.use(router);
+
 // game page interface
-app.get("/", function(req, res) {
+router.get("/", function(req, res) {
     res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Create DB
-app.get('/createdb', (req, res) => {
+router.get('/createdb', (req, res) => {
     let sql = 'CREATE DATABASE tradingGame';
     db.query(sql, (err, result) => {
         if(err) throw err;
@@ -39,7 +44,7 @@ app.get('/createdb', (req, res) => {
 });
 
 // Create item table
-app.get('/createItemTable', (req, res) => {
+router.get('/createItemTable', (req, res) => {
     let sql = 'CREATE TABLE items(id int AUTO_INCREMENT, Item VARCHAR(255), PRIMARY KEY(id))';
     db.query(sql, (err, result) => {
         if(err) throw err;
@@ -49,7 +54,7 @@ app.get('/createItemTable', (req, res) => {
 });
 
 // Create player item table
-app.get('/createPlayerItemTable', (req, res) => {
+router.get('/createPlayerItemTable', (req, res) => {
     let sql = 'CREATE TABLE player_items(id int AUTO_INCREMENT, Item VARCHAR(255), Qty SMALLINT, PRIMARY KEY(id))';
     db.query(sql, (err, result) => {
         if(err) throw err;
@@ -59,7 +64,7 @@ app.get('/createPlayerItemTable', (req, res) => {
 });
 
 // drops a specified table
-app.get('/deleteTable', (req, res) => {
+router.get('/deleteTable', (req, res) => {
     let tableName = "";
     let sql = `DROP TABLE ${tableName}`;
     db.query(sql, (err, result) => {
@@ -70,7 +75,7 @@ app.get('/deleteTable', (req, res) => {
 });
 
 // Insert item
-app.get('/addItem/:item', (req, res) => {
+router.get('/addItem/:item', (req, res) => {
     let post = {item:req.params.item};
     let sql = 'INSERT INTO items SET ?';
     let query = db.query(sql, post, (err, result) => {
@@ -81,7 +86,7 @@ app.get('/addItem/:item', (req, res) => {
 });
 
 // Insert player item
-app.get('/addPlayerItem/:item&:qty', (req, res) => {
+router.get('/addPlayerItem/:item&:qty', (req, res) => {
     let post = {Item:req.params.item, Qty:req.params.qty};
     let sql = 'INSERT INTO player_items SET ?';
     let query = db.query(sql, post, (err, result) => {
@@ -91,20 +96,36 @@ app.get('/addPlayerItem/:item&:qty', (req, res) => {
     });
 });
 
-// Select all items
-app.get('/getTableData/:tableName', (req, res) => {
-    let sql = `SELECT * FROM ${req.params.tableName}`;
-    let query = db.query(sql, (err, results) => {
-        if(err) throw err;
-        res.send(`${req.params.tableName} data fetched...`);
-        let obj = JSON.stringify(results);
-        console.log(obj);
-        return obj;
+const selectAllItems = (tableName) => {
+    console.log(`selectAllItems for ${tableName}`);
+    return new Promise((resolve, reject) => {
+        console.log("calling promise");
+        db.query(`SELECT * FROM ${tableName}`, (error, elements) => {
+            console.log("executed query");
+            if (error) {
+                console.log("triggered error");
+                return reject(error);
+            }
+            console.log("resolving promise");
+            return resolve(elements);
+        });
     });
+ };
+
+// Select all items
+router.get('/getTableData/:tableName', async (req, res) => {
+    try {
+        console.log(`calling selectAllItems for ${req.params.tableName}`);
+        const results = await selectAllItems(req.params.tableName);
+        res.status(200).json({elements : results});
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
 });
 
 // Select single item
-app.get('/getItem/:id', (req, res) => {
+router.get('/getItem/:id', (req, res) => {
     let sql = `SELECT * FROM items WHERE id = ${req.params.id}`;
     let query = db.query(sql, (err, result) => {
         if(err) throw err;
@@ -114,7 +135,7 @@ app.get('/getItem/:id', (req, res) => {
 });
 
 // Update item
-app.get('/updateItem/:id', (req, res) => {
+router.get('/updateItem/:id', (req, res) => {
     let newTitle = 'Title';
     let sql = `UPDATE items SET title = '${newTitle}' WHERE id = ${req.params.id}`;
     let query = db.query(sql, (err, result) => {
@@ -125,7 +146,7 @@ app.get('/updateItem/:id', (req, res) => {
 });
 
 // Delete item
-app.get('/deleteItem/:id', (req, res) => {
+router.get('/deleteItem/:id', (req, res) => {
     let sql = `DELETE FROM items WHERE id = ${req.params.id}`;
     let query = db.query(sql, (err, result) => {
         if(err) throw err;
