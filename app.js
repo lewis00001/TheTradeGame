@@ -4,21 +4,17 @@ var path = require("path");
 
 // Create connection
 const db = mysql.createConnection({
-    //connectionLimit: 10,
     host     : 'localhost',
     user     : 'root',
     password : 'root',
     database : 'tradingGame'
-    //port: 8080
 });
 
 const C_PORT = "8080"; 
 
-// Connect
+// Connect to db
 db.connect((err) => {
-    if(err){
-        throw err;
-    }
+    if(err){ throw err; }
     console.log('MySql Connected...');
 });
 
@@ -43,9 +39,9 @@ router.get('/createdb', (req, res) => {
     });
 });
 
-// Create item table
-router.get('/createItemTable', (req, res) => {
-    let sql = 'CREATE TABLE items(id int AUTO_INCREMENT, Item VARCHAR(255), PRIMARY KEY(id))';
+// Create items table
+router.get('/createItemsTable', (req, res) => {
+    let sql = 'CREATE TABLE items(id int, item VARCHAR(255), description VARCHAR(255), PRIMARY KEY(id));';
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
@@ -53,9 +49,39 @@ router.get('/createItemTable', (req, res) => {
     });
 });
 
+// Populate data in items table
+router.get('/populateItemsTable', (req, res) => {
+    let sql = "INSERT INTO items(id,item,description) VALUES" + 
+        "(100, 'salt', 'Important for livestock, food preservation, and seasoning.')," +
+        "(200, 'oil', 'Used as lamp fuel, cooking, soap making, and for healing powers.')," +
+        "(300, 'spices', 'Added to mask the flavour of bland and not-so-fresh food.')," +
+        "(400, 'gems', 'Desired for their beauty, and for ornamentation.')," +
+        "(500, 'wool', 'Used for clothing, bags, carpets, and saddle blankets.')," +
+        "(600, 'furs', 'Used for footwear, clothes, saddles and harnesses, light armor.')," +
+        "(700, 'jade', 'A durable material used for tools, sculptures, and jewelry.')," +
+        "(800, 'silk', 'Used for musical instruments, bowstrings, light armor, and clothing.');";
+    db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.send('Items table data populated...');
+    });
+});
+
+// Populate player item table
+router.get('/populatePlayerItemsTable', (req, res) => {
+    let sql = 'INSERT INTO player_items(id,qty) VALUES' + 
+        '(100, 20),(200, 20),(300, 20),(400, 20),' +
+        '(500, 20),(600, 20),(700, 20),(800, 20);';
+    db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.send('Player Items table created...');
+    });
+});
+
 // Create player item table
-router.get('/createPlayerItemTable', (req, res) => {
-    let sql = 'CREATE TABLE player_items(id int AUTO_INCREMENT, Item VARCHAR(255), Qty SMALLINT, PRIMARY KEY(id))';
+router.get('/createPlayerItemsTable', (req, res) => {
+    let sql = 'CREATE TABLE player_items ( id int, qty SMALLINT, PRIMARY KEY(id) );';
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
@@ -86,8 +112,8 @@ router.get('/addItem/:item', (req, res) => {
 });
 
 // Insert player item
-router.get('/addPlayerItem/:item&:qty', (req, res) => {
-    let post = {Item:req.params.item, Qty:req.params.qty};
+router.get('/addPlayerItem/:item&:quantity', (req, res) => {
+    let post = {item:req.params.item, qty:req.params.quantity};
     let sql = 'INSERT INTO player_items SET ?';
     let query = db.query(sql, post, (err, result) => {
         if(err) throw err;
@@ -96,17 +122,38 @@ router.get('/addPlayerItem/:item&:qty', (req, res) => {
     });
 });
 
+const selectAllPlayerItems = () => {
+    console.log(`select all items from player_items with item descriptions from items table.`);
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT pi.id, i.item, pi.qty, i.description FROM player_items pi ` +
+                `LEFT JOIN items i ON pi.id = i.id GROUP BY pi.id;`
+        , (error, elements) => {
+            if (error) {
+                return reject(error);
+            }
+            return resolve(elements);
+        });
+    });
+ };
+
+ // Select all player items
+router.get('/getAllPlayerItems', async (req, res) => {
+    try {
+        const results = await selectAllPlayerItems();
+        res.status(200).json({elements : results});
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
 const selectAllItems = (tableName) => {
     console.log(`selectAllItems for ${tableName}`);
     return new Promise((resolve, reject) => {
-        console.log("calling promise");
         db.query(`SELECT * FROM ${tableName}`, (error, elements) => {
-            console.log("executed query");
             if (error) {
-                console.log("triggered error");
                 return reject(error);
             }
-            console.log("resolving promise");
             return resolve(elements);
         });
     });
@@ -115,7 +162,6 @@ const selectAllItems = (tableName) => {
 // Select all items
 router.get('/getTableData/:tableName', async (req, res) => {
     try {
-        console.log(`calling selectAllItems for ${req.params.tableName}`);
         const results = await selectAllItems(req.params.tableName);
         res.status(200).json({elements : results});
     } catch (error) {
@@ -125,33 +171,22 @@ router.get('/getTableData/:tableName', async (req, res) => {
 });
 
 // Select single item
-router.get('/getItem/:id', (req, res) => {
-    let sql = `SELECT * FROM items WHERE id = ${req.params.id}`;
+router.get('/getItem/:tableName/:id', (req, res) => {
+    let sql = `SELECT * FROM ${req.params.tableName} WHERE id = ${req.params.id}`;
     let query = db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
-        res.send('Items fetched...');
+        res.send(`Item ${req.params.id} fetched from ${req.params.tableName}`);
     });
 });
 
-// Update item
-router.get('/updateItem/:id', (req, res) => {
-    let newTitle = 'Title';
-    let sql = `UPDATE items SET title = '${newTitle}' WHERE id = ${req.params.id}`;
+// Delete single item
+router.get('/deleteItem/:tableName/:id', (req, res) => {
+    let sql = `DELETE FROM ${req.params.tableName} WHERE id = ${req.params.id}`;
     let query = db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
-        res.send('Item updated...');
-    });
-});
-
-// Delete item
-router.get('/deleteItem/:id', (req, res) => {
-    let sql = `DELETE FROM items WHERE id = ${req.params.id}`;
-    let query = db.query(sql, (err, result) => {
-        if(err) throw err;
-        console.log(result);
-        res.send('Item deleted...');
+        res.send(`Item ${req.params.id} deleted from ${req.params.tableName}`);
     });
 });
 

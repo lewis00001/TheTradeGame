@@ -5,28 +5,109 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradingGame</title>
+    <style>
+        #player-items { 
+            display: inline-block;
+        }
+        .player-trade-items {
+            border: 1px solid black;
+            padding: 1em;
+            width: 175px;
+            margin-top: 20px;
+        }
+        .trader-section {
+            padding: 1em;
+            background-color: #ddd;
+            display: flex;
+            justify-content: space-around;
+        }
+        .trader {
+            min-width: 80px;
+            min-height: 120px;
+            padding: 0.5em;
+            background-color: #aaa;
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .p-items {
+            width: 15em;
+        }
+        .item-name {
+            display: block;
+            float: left;
+            width: 50%;
+        }
+        .item-quantity {
+            display: block;
+            float: right;
+            width: 50%;
+        }
+    </style>
 </head>
 <body>
     <h2>Trading Game</h2>
-    <div id="player-items"></div>
+    <h3 class="instructions">The information on how to play the game will be here at some point.</h3>
+    <div class="trader-section" id="trader-section">
+        <div class="trader" id="trader-1">
+            <h4 class="trader-title">Trader 1 - Alef</h4>
+            <a href="https://placeholder.com"><img src="https://via.placeholder.com/100"></a>
+            <input type="text" class="trader-input" id="trader-1">
+            <input type="text" class="trader-input" id="trader-1">
+        </div>
+        <div class="trader" id="trader-2">
+            <h4 class="trader-title">Trader 2 - Lamed</h4>
+            <a href="https://placeholder.com"><img src="https://via.placeholder.com/100"></a>
+            <input type="text" class="trader-input" id="trader-2">
+            <input type="text" class="trader-input" id="trader-2">
+        </div>
+        <div class="trader" id="trader-3">
+            <h4 class="trader-title">Trader 3 - Samech</h4>
+            <a href="https://placeholder.com"><img src="https://via.placeholder.com/100"></a>
+            <input type="text" class="trader-input" id="trader-3">
+            <input type="text" class="trader-input" id="trader-3">
+        </div>
+    </div>
+
+    <div class="player-trade-items">
+        <h4>Player Trade Items</h4>
+        <div id="player-items"></div>
+    </div>
 
     <script>
         let playerItems = document.getElementById('player-items');
-        
-        // let getPlayerItems = async function() {
-        //     const response = await fetch('/getTableData/player_items');
-        //     console.log(response);
-        // }
-        // getPlayerItems();
-
-        
-        (async function() {
-            const res = await fetch('/getTableData/player_items');
+       
+        async function displayPlayerItems() {
+            const res = await fetch('/getAllPlayerItems');
             const data = await res.json();
-            console.log(data.elements[0].Item);
-        })();
+            
+            data.elements.forEach(element => {
+                console.log(element);
+                // loop through all returned items and output them to the UI
+                // create containing div
+                let container = document.createElement('div');
+                container.setAttribute('class', 'p-items');
+                playerItems.appendChild(container);
+                // create name div and append to container
+                let nameDiv = document.createElement('div');
+                nameDiv.setAttribute('class', 'item-name');
+                nameDiv.appendChild(document.createTextNode(element.item));
+                container.appendChild(nameDiv);
+                // create quantity div and append to container
+                let quantDiv = document.createElement('div');
+                quantDiv.setAttribute('class', 'item-quantity');
+                quantDiv.appendChild(document.createTextNode(element.qty));
+                container.appendChild(quantDiv);
+            });
 
-        //fetch('/getTableData/player_items').then(res => res.json()).then(data => console.log(data));
+        }
+        displayPlayerItems();
+
+        // (async function() {
+        //     const res = await fetch('/getTableData/player_items');
+        //     const data = await res.json();
+        //     console.log(data.elements[0].Item);
+        // })();
 
     </script>
 </body>
