@@ -12,7 +12,7 @@
         .trade-data-divs {
             border: 1px solid black;
             padding: 1em;
-            width: 175px;
+            width: 375px;
             margin: 20px 2px 0 2px;
         }
         .data-output-divs {
@@ -37,18 +37,12 @@
         .trader-title {
             text-align: center;
         }
-        .p-items {
-            width: 15em;
+        .data-row {
+            display: flex;
+            justify-content: space-between;
         }
-        .item-name {
-            display: block;
-            float: left;
-            width: 50%;
-        }
-        .item-quantity {
-            display: block;
-            float: right;
-            width: 50%;
+        .data-cell {
+            min-width: 30px;
         }
         .button-options {
             margin: 0 auto 10px auto;
@@ -134,7 +128,12 @@
             // insert new data to trade history
             const res = await fetch(`/addToTradeHistory/${traderName}&${itemsForTrade}&${5}&${tradeQty}`)
                 .then(res => res.text())
-                .then(text => console.log(text));
+                .then(text => console.log(text)
+            );
+            displayTradeHistoryData();
+        }
+
+        async function displayTradeHistoryData() {
             // clear table contents
             tradeHistory.innerHTML = '';
             // get new trade history data
@@ -144,20 +143,31 @@
                 // loop through all returned items and output them to the UI
                 // create containing div
                 let container = document.createElement('div');
-                container.setAttribute('class', 'p-items');
-                playerItems.appendChild(container);
-                // create name div and append to container
+                container.setAttribute('class', 'data-row');
+                tradeHistory.appendChild(container);
+                // create trader name div and append to container
                 let nameDiv = document.createElement('div');
-                nameDiv.setAttribute('class', 'item-name');
-                nameDiv.appendChild(document.createTextNode(element.item));
+                nameDiv.setAttribute('class', 'data-cell');
+                nameDiv.appendChild(document.createTextNode(element.trader_name));
                 container.appendChild(nameDiv);
                 // create quantity div and append to container
-                let quantDiv = document.createElement('div');
-                quantDiv.setAttribute('class', 'item-quantity');
-                quantDiv.appendChild(document.createTextNode(element.qty));
-                container.appendChild(quantDiv);
+                let tradeItemDiv = document.createElement('div');
+                tradeItemDiv.setAttribute('class', 'data-cell');
+                tradeItemDiv.appendChild(document.createTextNode(element.item));
+                container.appendChild(tradeItemDiv);
+                // create quantity div and append to container
+                let sellPriceDiv = document.createElement('div');
+                sellPriceDiv.setAttribute('class', 'data-cell');
+                sellPriceDiv.appendChild(document.createTextNode(element.sell_price_per_item));
+                container.appendChild(sellPriceDiv);
+                // create quantity div and append to container
+                let numItemsTradedDiv = document.createElement('div');
+                numItemsTradedDiv.setAttribute('class', 'data-cell');
+                numItemsTradedDiv.appendChild(document.createTextNode(element.num_items_traded));
+                container.appendChild(numItemsTradedDiv);
             });
         }
+        displayTradeHistoryData();
 
         // display player items
         const playerItems = document.getElementById('player-items-output');
@@ -168,16 +178,16 @@
                 // loop through all returned items and output them to the UI
                 // create containing div
                 let container = document.createElement('div');
-                container.setAttribute('class', 'p-items');
+                container.setAttribute('class', 'data-row');
                 playerItems.appendChild(container);
                 // create name div and append to container
                 let nameDiv = document.createElement('div');
-                nameDiv.setAttribute('class', 'item-name');
+                nameDiv.setAttribute('class', 'data-cell');
                 nameDiv.appendChild(document.createTextNode(element.item));
                 container.appendChild(nameDiv);
                 // create quantity div and append to container
                 let quantDiv = document.createElement('div');
-                quantDiv.setAttribute('class', 'item-quantity');
+                quantDiv.setAttribute('class', 'data-cell');
                 quantDiv.appendChild(document.createTextNode(element.qty));
                 container.appendChild(quantDiv);
             });

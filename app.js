@@ -173,7 +173,7 @@ router.get('/addPlayerItem/:item&:quantity', (req, res) => {
 
 // Select all player items helper
 const selectAllPlayerItems = () => {
-    console.log(`select all items from player_items with item descriptions from items table.`);
+    //console.log(`select all items from player_items with item descriptions from items table.`);
     return new Promise((resolve, reject) => {
         db.query(`SELECT pi.id, i.item, pi.qty, i.description FROM player_items pi ` +
                 `LEFT JOIN items i ON pi.id = i.id GROUP BY pi.id;`
@@ -199,7 +199,7 @@ router.get('/getAllPlayerItems', async (req, res) => {
 
 // select all items helper
 const selectAllItems = (tableName) => {
-    console.log(`selectAllItems for ${tableName}`);
+    //console.log(`selectAllItems for ${tableName}`);
     return new Promise((resolve, reject) => {
         db.query(`SELECT * FROM ${tableName}`, (error, elements) => {
             if (error) {
