@@ -20,6 +20,7 @@ db.connect((err) => {
 
 const app = express();
 app.use(express.json({ limit: '1000kb' }));
+app.use(express.static(__dirname+'/public'));
 
 const router = express.Router();
 app.use(router);
@@ -46,6 +47,55 @@ router.get('/createItemsTable', (req, res) => {
         if(err) throw err;
         console.log(result);
         res.send('Items table created...');
+    });
+});
+
+// Create turn trades table
+router.get('/createTurnTradesTable', (req, res) => {
+    let sql = 'CREATE TABLE turn_trades(turn int NOT NULL, ' +
+                'item varchar(10) NOT NULL, ' +
+                'alef_bonus int NOT NULL, ' +
+                'lamed_bonus int NOT NULL, ' +
+                'samech_bonus int NOT NULL, ' +
+                'PRIMARY KEY(turn));';
+    db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.send('Turn trades table created...');
+    });
+});
+
+// Populate data in turn trades table
+router.get('/populateTurnTrades', (req, res) => {
+    let sql = "INSERT INTO turn_trades(turn, item, alef_bonus, lamed_bonus, samech_bonus) VALUES " +
+	            "(1, 'salt', 0, 4, 8), " +
+            	"(2, 'gems', 8, 0, 4), " +
+	            "(3, 'wool', 4, 8, 0), " +
+	            "(4, 'oil', 0, 4, 8), " +
+	            "(5, 'spices', 8, 0, 4), " +
+	            "(6, 'furs', 4, 8, 0), " +
+	            "(7, 'jade', 0, 4, 8), " +
+	            "(8, 'silk', 8, 0, 4), " +
+	            "(9, 'salt', 4, 8, 0), " +
+	            "(10, 'gems', 0, 4, 8), " +
+	            "(11, 'wool', 8, 0, 4), " +
+	            "(12, 'oil', 4, 8, 0), " +
+ 	            "(13, 'spices', 0, 4, 8), " +
+	            "(14, 'furs', 8, 0, 4), " +
+	            "(15, 'jade', 4, 8, 0), " +
+	            "(16, 'silk', 0, 4, 8), " +
+	            "(17, 'salt', 8, 0, 4), " +
+	            "(18, 'gems', 4, 8, 0), " +
+	            "(19, 'wool', 0, 4, 8), " +
+	            "(20, 'oil', 8, 0, 4), " +
+	            "(21, 'spices', 4, 8, 0), " +
+	            "(22, 'furs', 0, 4, 8), " +
+	            "(23, 'jade', 8, 0, 4), " +
+	            "(24, 'silk', 4, 8, 0);";
+    db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.send('Items table data populated...');
     });
 });
 
@@ -199,7 +249,6 @@ router.get('/getAllPlayerItems', async (req, res) => {
 
 // select all items helper
 const selectAllItems = (tableName) => {
-    //console.log(`selectAllItems for ${tableName}`);
     return new Promise((resolve, reject) => {
         db.query(`SELECT * FROM ${tableName}`, (error, elements) => {
             if (error) {

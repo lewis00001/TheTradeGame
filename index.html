@@ -12,7 +12,7 @@
         .trade-data-divs {
             border: 1px solid black;
             padding: 1em;
-            width: 375px;
+            width: 280px;
             margin: 20px 2px 0 2px;
         }
         .data-output-divs {
@@ -34,8 +34,16 @@
             justify-content: center;
             flex-direction: column;
         }
-        .trader-title {
+        .trader-title, .t-h4 {
             text-align: center;
+        }
+        .trader-img {
+            width: 200px;
+            margin: 0 auto;
+        }
+        .data-heading {
+            font-weight: 800;
+            padding-bottom: 4px;
         }
         .data-row {
             display: flex;
@@ -56,12 +64,12 @@
     <div class="trader-section" id="trader-section">
         <div class="trader" id="trader-1">
             <h3 class="trader-title">Trader-1: Alef</h3>
-            <img src="./img/trader-1.jpg">
-            <h4>What would you like to trade?</h4>
+            <img class="trader-img" src="./img/trader-1.jpg">
+            <h4 class="t-h4">What would you like to trade?</h4>
 
-            <form action="javascript:processTrade()" class="trade-form">
-                <input type="hidden" id="trader-name" value="Alef">
-                <select name="items-for-trade" id="items-for-trade" required>
+            <form action="javascript:processTrader1()" class="trade-form">
+                <input type="hidden" id="trader-name-t1" value="Alef">
+                <select name="items-for-trade" id="items-for-trade-t1" required>
                     <option value="">--choose an item--</option>
                     <option value="salt">Salt</option>
                     <option value="gems">Gems</option>
@@ -72,7 +80,7 @@
                     <option value="jade">Jade</option>
                     <option value="silk">Silk</option>
                 </select>
-                <input type="number" class="trader-input" id="trade-qty" placeholder="qty"
+                <input type="number" class="trader-input" id="trade-qty-t1" placeholder="qty"
                     required="required" min="0" step="1" max="20">
                 <input type="submit">
             </form>
@@ -80,49 +88,132 @@
 
         <div class="trader" id="trader-2">
             <h4 class="trader-title">Trader 2 - Lamed</h4>
-            <a href="https://placeholder.com"><img src="https://via.placeholder.com/100"></a>
-            <input type="text" class="trader-input" id="trader-2">
-            <input type="text" class="trader-input" id="trader-2">
+            <img class="trader-img" src="./img/trader-2.jpg">
+            <h4 class="t-h4">What would you like to trade?</h4>
+
+            <form action="javascript:processTrader2()" class="trade-form">
+                <input type="hidden" id="trader-name-t2" value="Lamed">
+                <select name="items-for-trade" id="items-for-trade-t2" required>
+                    <option value="">--choose an item--</option>
+                    <option value="salt">Salt</option>
+                    <option value="gems">Gems</option>
+                    <option value="wool">Wool</option>
+                    <option value="oil">Oil</option>
+                    <option value="spices">Spices</option>
+                    <option value="furs">Furs</option>
+                    <option value="jade">Jade</option>
+                    <option value="silk">Silk</option>
+                </select>
+                <input type="number" class="trader-input" id="trade-qty-t2" placeholder="qty"
+                    required="required" min="0" step="1" max="20">
+                <input type="submit">
+            </form>
         </div>
+
         <div class="trader" id="trader-3">
             <h4 class="trader-title">Trader 3 - Samech</h4>
-            <a href="https://placeholder.com"><img src="https://via.placeholder.com/100"></a>
-            <input type="text" class="trader-input" id="trader-3">
-            <input type="text" class="trader-input" id="trader-3">
+            <img class="trader-img" src="./img/trader-3.jpg">
+            <h4 class="t-h4">What would you like to trade?</h4>
+
+            <form action="javascript:processTrader3()" class="trade-form">
+                <input type="hidden" id="trader-name-t3" value="Samech">
+                <select name="items-for-trade" id="items-for-trade-t3" required>
+                    <option value="">--choose an item--</option>
+                    <option value="salt">Salt</option>
+                    <option value="gems">Gems</option>
+                    <option value="wool">Wool</option>
+                    <option value="oil">Oil</option>
+                    <option value="spices">Spices</option>
+                    <option value="furs">Furs</option>
+                    <option value="jade">Jade</option>
+                    <option value="silk">Silk</option>
+                </select>
+                <input type="number" class="trader-input" id="trade-qty-t3" placeholder="qty"
+                    required="required" min="0" step="1" max="20">
+                <input type="submit">
+            </form>
         </div>
     </div>
 
     <div class="data-output-divs">
         <div class="trade-data-divs">
             <h4>Player Trade Items</h4>
-            <div class="button-options">
-                <form action="" method="post">
-                    <input type="button" value="Update Player Items">
-                </form>
+            <div class="data-heading data-row">
+                <div class="data-cell">Item</div>
+                <div class="data-cell">Quantity</div>
             </div>
+            <hr>
             <div id="player-items-output"></div>
         </div>
     
         <div class="trade-data-divs">
             <h4>Trade History</h4>
-            <div class="button-options">
-                <form action="" method="post">
-                    <input type="button" value="Update Trade History">
-                </form>
+            <div class="data-heading data-row">
+                <div class="data-cell">Trader</div>
+                <div class="data-cell">Item</div>
+                <div class="data-cell">Price</div>
+                <div class="data-cell">Quantity</div>
             </div>
+            <hr>
             <div id="trade-history-output"></div>
         </div>
     </div>
 
     <script>
 
+        function gameStart() {
+
+        }
+
+        // this tracks the current turn and is used to calculate trade bonuses
+        let currentTurn = 1;
+        // get the turn trade information and store it a const
+        const turnTrades = [];
+
+        async function getTurnTrades() {
+            const res = await fetch('/getTableData/turn_trades');
+            const data = await res.json();
+            data.elements.forEach(element => {
+                let obj = {};
+                obj['turn'] = element.turn;
+                obj['item'] = element.item;
+                obj['alefBonus'] = element.alef_bonus;
+                obj['lamedBonus'] = element.lamed_bonus;
+                obj['samechBonus'] = element.samech_bonus;
+                turnTrades.push(obj);
+            });
+        }
+        getTurnTrades();
+
         // process trade
         const tradeHistory = document.getElementById('trade-history-output');
-        async function processTrade() {
+
+        // trader 1
+        function processTrader1() {
             // get values from form
-            const traderName = document.getElementById('trader-name').value;
-            const itemsForTrade = document.getElementById('items-for-trade').value;
-            const tradeQty = document.getElementById('trade-qty').value;
+            const traderName = document.getElementById('trader-name-t1').value;
+            const itemsForTrade = document.getElementById('items-for-trade-t1').value;
+            const tradeQty = document.getElementById('trade-qty-t1').value;
+            updateTradeHistory(traderName, itemsForTrade, tradeQty);
+        }
+        // trader 2
+        function processTrader2() {
+            // get values from form
+            const traderName = document.getElementById('trader-name-t2').value;
+            const itemsForTrade = document.getElementById('items-for-trade-t2').value;
+            const tradeQty = document.getElementById('trade-qty-t2').value;
+            updateTradeHistory(traderName, itemsForTrade, tradeQty);
+        }
+        // trader 3
+        function processTrader3() {
+            // get values from form
+            const traderName = document.getElementById('trader-name-t3').value;
+            const itemsForTrade = document.getElementById('items-for-trade-t3').value;
+            const tradeQty = document.getElementById('trade-qty-t3').value;
+            updateTradeHistory(traderName, itemsForTrade, tradeQty);
+        }
+
+        async function updateTradeHistory(traderName, itemsForTrade, tradeQty) {
             // ensure data is passed to function
             console.log(`Trade Details: ${traderName}: ${itemsForTrade}: ${tradeQty}`);
             // insert new data to trade history
@@ -130,9 +221,11 @@
                 .then(res => res.text())
                 .then(text => console.log(text)
             );
+
             displayTradeHistoryData();
         }
 
+        // update trade history on the html page
         async function displayTradeHistoryData() {
             // clear table contents
             tradeHistory.innerHTML = '';
@@ -191,15 +284,9 @@
                 quantDiv.appendChild(document.createTextNode(element.qty));
                 container.appendChild(quantDiv);
             });
-
         }
         displayPlayerItems();
 
-        // (async function() {
-        //     const res = await fetch('/getTableData/player_items');
-        //     const data = await res.json();
-        //     console.log(data.elements[0].Item);
-        // })();
 
     </script>
 </body>
