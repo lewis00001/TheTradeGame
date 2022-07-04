@@ -99,20 +99,66 @@ router.get('/populateTurnTrades', (req, res) => {
     });
 });
 
-// Create trade history table
-router.get('/createTradeHistoryTable', (req, res) => {
-    let sql = 'CREATE TABLE trade_history(id int NOT NULL AUTO_INCREMENT, trader_name VARCHAR(128), ' +
-                'item VARCHAR(255), sell_price_per_item int,num_items_traded int,PRIMARY KEY(id));';
+// create rumors table
+router.get('/createRumorsTable', (req, res) => {
+    let sql = 'CREATE TABLE rumors(turn int NOT NULL, rumor VARCHAR(255), PRIMARY KEY(turn));';
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
-        res.send('Items table created...');
+        res.send('Rumors table created...');
+    });
+});
+
+// populate rumors table
+router.get('/populateRumorsTable', (req, res) => {
+    let sql = "INSERT INTO rumors(turn, rumor) VALUES " +
+        "(1, 'I have heard some will pay a lot for salt.'), " +
+        "(2, 'So many people are seeking gems in this place.'), " +
+        "(3, 'Many sheep have been killed, I wonder if wool is in demand.'), " +
+        "(4, 'It seems there is an oil shortage in a near by town.'), " +
+        "(5, 'Have you tried the food here? It needs some spices I think.'), " +
+        "(6, 'The weather has been getting colder - we should sell furs.'), " +
+        "(7, 'I have heard some will pay a lot for jade.'), " +
+        "(8, 'I have heard the royal family seeks silk. Which buyer has connections?'), " +
+        "(9, 'Shipments from the sea have been halted - salt might be a good idea.'), " +
+        "(10, 'It seems no one here is selling gems. I wonder what the demand is.'), " +
+        "(11, 'We have the finest wool - I bet we can find a buyer.'), " +
+        "(12, 'The temple seeks oil. I wonder which buyer has connections.'), " +
+        "(13, 'The last shipment of spices was piliaged before making it to market.'), " +
+        "(14, 'Our exotic furs should get a good price today.'), " +
+        "(15, 'Everyone seems to be wearing jade - it seems they like it here.'), " +
+        "(16, 'I have heard arrows cannot penitrate through silk.'), " +
+        "(17, 'All the food here is bland. I think they need to add salt.'), " +
+        "(18, 'These blue gems are just exquisit - do you agree?'), " +
+        "(19, 'The market fire detroyed many tents. Maybe selling wool is good?'), " +
+        "(20, 'Oil prices are so high, there must be a shortage.'), " +
+        "(21, 'A good trade should spice up our business today.'), " +
+        "(22, 'It seems the wealthy are wearing furs in this place.'), " +
+        "(23, 'I have heard jade brings good luck.'), " +
+        "(24, 'People have said the new silk underwear will reduce chafing.');";
+    db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.send('Rumors table data populated...');
+    });
+});
+
+
+
+// Create trade history table
+router.get('/createTradeHistoryTable', (req, res) => {
+    let sql = 'CREATE TABLE trade_history(turn int NOT NULL, trader_name VARCHAR(20), ' +
+                'item VARCHAR(20), sell_price_per_item int,num_items_traded int,PRIMARY KEY(turn));';
+    db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.send('TradeHistory table created...');
     });
 });
 
 // Insert into trade history table
-router.get('/addToTradeHistory/:traderName&:item&:sellPrice&:numItemsTraded', (req, res) => {
-    let post = {trader_name:req.params.traderName, item:req.params.item, 
+router.get('/addToTradeHistory/:currentTurn&:traderName&:item&:sellPrice&:numItemsTraded', (req, res) => {
+    let post = {turn:req.params.currentTurn, trader_name:req.params.traderName, item:req.params.item, 
                 sell_price_per_item:req.params.sellPrice, num_items_traded:req.params.numItemsTraded};
     let sql = 'INSERT INTO trade_history SET ?';
     let query = db.query(sql, post, (err, result) => {
@@ -121,32 +167,6 @@ router.get('/addToTradeHistory/:traderName&:item&:sellPrice&:numItemsTraded', (r
         res.send(result);
     });
 });
-
-// // Select all player items helper
-// const selectAllTradeHistory = () => {
-//     console.log(`select all trade history events from the trade_history table`);
-//     return new Promise((resolve, reject) => {
-//         db.query(`SELECT pi.id, i.item, pi.qty, i.description FROM player_items pi ` +
-//                 `LEFT JOIN items i ON pi.id = i.id GROUP BY pi.id;`
-//         , (error, elements) => {
-//             if (error) {
-//                 return reject(error);
-//             }
-//             return resolve(elements);
-//         });
-//     });
-//  };
-
-// // Select all player items
-// router.get('/getAllPlayerItems', async (req, res) => {
-//     try {
-//         const results = await selectAllTradeHistory();
-//         res.status(200).json({elements : results});
-//     } catch (error) {
-//         console.log(error);
-//         res.sendStatus(500);
-//     }
-// });
 
 // Populate data in items table
 router.get('/populateItemsTable', (req, res) => {
@@ -189,13 +209,22 @@ router.get('/createPlayerItemsTable', (req, res) => {
 });
 
 // drops a specified table
-router.get('/deleteTable', (req, res) => {
-    let tableName = "";
-    let sql = `DROP TABLE ${tableName}`;
+router.get('/deleteTable/:tableName', (req, res) => {
+    let sql = `DROP TABLE ${req.params.tableName}`;
     db.query(sql, (err, result) => {
         if(err) throw err;
         console.log(result);
-        res.send(`${tableName} table deleted.`);
+        res.send(`${req.params.tableName} table deleted.`);
+    });
+});
+
+// removes all rows from a specified table
+router.get('/purgeTable/:tableName', (req, res) => {
+    let sql = `DELETE FROM ${req.params.tableName}`;
+    db.query(sql, (err, result) => {
+        if(err) throw err;
+        console.log(result);
+        res.send(`${req.params.tableName} table purged.`);
     });
 });
 
