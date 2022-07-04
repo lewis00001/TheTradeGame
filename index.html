@@ -6,6 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TradingGame</title>
     <style>
+        .section-1 {
+            width: 100%;
+            text-align: center;
+        }
+        .section-2 {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+        h2 {
+            width: 100%;
+        }
         #player-items { 
             display: inline-block;
         }
@@ -24,6 +36,7 @@
             background-color: #ddd;
             display: flex;
             justify-content: space-around;
+            width: 900px;
         }
         .trader {
             min-width: 80px;
@@ -38,7 +51,7 @@
             text-align: center;
         }
         .trader-img {
-            width: 200px;
+            width: 150px;
             margin: 0 auto;
         }
         .data-heading {
@@ -55,85 +68,99 @@
         .button-options {
             margin: 0 auto 10px auto;
         }
+        .rumor {
+            font-size: large;
+            font-weight: 800;
+            text-align: center;
+            padding: 0.5em;
+            background-color: bisque;
+            max-width: 915px;
+            margin: auto;
+        }
     </style>
 </head>
 <body>
-    <h2>Trading Game</h2>
-    <h3 class="instructions">The information on how to play the game will be here at some point.</h3>
-
-    <div class="trader-section" id="trader-section">
-        <div class="trader" id="trader-1">
-            <h3 class="trader-title">Trader-1: Alef</h3>
-            <img class="trader-img" src="./img/trader-1.jpg">
-            <h4 class="t-h4">What would you like to trade?</h4>
-
-            <form action="javascript:processTrader1()" class="trade-form" id="form-t1">
-                <input type="hidden" id="trader-name-t1" value="Alef">
-                <select name="items-for-trade" id="items-for-trade-t1" required>
-                    <option value="">--choose an item--</option>
-                    <option value="salt">Salt</option>
-                    <option value="gems">Gems</option>
-                    <option value="wool">Wool</option>
-                    <option value="oil">Oil</option>
-                    <option value="spices">Spices</option>
-                    <option value="furs">Furs</option>
-                    <option value="jade">Jade</option>
-                    <option value="silk">Silk</option>
-                </select>
-                <input type="number" class="trader-input" id="trade-qty-t1" placeholder="qty"
-                    required="required" min="0" step="1" max="20">
-                <input type="submit">
-            </form>
+    <section class="section-1">
+        <h2>Trading Game</h2>
+        <h3 class="instructions">The information on how to play the game will be here at some point.</h3>
+    </section>
+    <section class="section-2">
+        <div class="trader-section" id="trader-section">
+            <div class="trader" id="trader-1">
+                <h3 class="trader-title">Trader-1: Alef</h3>
+                <img class="trader-img" src="./img/trader-1.jpg">
+                <h4 class="t-h4">What would you like to trade?</h4>
+    
+                <form action="javascript:processTrader1()" class="trade-form" id="form-t1">
+                    <input type="hidden" id="trader-name-t1" value="Alef">
+                    <select name="items-for-trade" id="items-for-trade-t1" required>
+                        <option value="">--choose an item--</option>
+                        <option value="salt">Salt</option>
+                        <option value="gems">Gems</option>
+                        <option value="wool">Wool</option>
+                        <option value="oil">Oil</option>
+                        <option value="spices">Spices</option>
+                        <option value="furs">Furs</option>
+                        <option value="jade">Jade</option>
+                        <option value="silk">Silk</option>
+                    </select>
+                    <input type="number" class="trader-input" id="trade-qty-t1" placeholder="qty"
+                        required="required" min="0" step="1" max="20">
+                    <input type="submit">
+                </form>
+            </div>
+    
+            <div class="trader" id="trader-2">
+                <h3 class="trader-title">Trader 2 - Lamed</h3>
+                <img class="trader-img" src="./img/trader-2.jpg">
+                <h4 class="t-h4">What would you like to trade?</h4>
+    
+                <form action="javascript:processTrader2()" class="trade-form" id="form-t2">
+                    <input type="hidden" id="trader-name-t2" value="Lamed">
+                    <select name="items-for-trade" id="items-for-trade-t2" required>
+                        <option value="">--choose an item--</option>
+                        <option value="salt">Salt</option>
+                        <option value="gems">Gems</option>
+                        <option value="wool">Wool</option>
+                        <option value="oil">Oil</option>
+                        <option value="spices">Spices</option>
+                        <option value="furs">Furs</option>
+                        <option value="jade">Jade</option>
+                        <option value="silk">Silk</option>
+                    </select>
+                    <input type="number" class="trader-input" id="trade-qty-t2" placeholder="qty"
+                        required="required" min="0" step="1" max="20">
+                    <input type="submit">
+                </form>
+            </div>
+    
+            <div class="trader" id="trader-3">
+                <h3 class="trader-title">Trader 3 - Samech</h3>
+                <img class="trader-img" src="./img/trader-3.jpg">
+                <h4 class="t-h4">What would you like to trade?</h4>
+    
+                <form action="javascript:processTrader3()" class="trade-form" id="form-t3">
+                    <input type="hidden" id="trader-name-t3" value="Samech">
+                    <select name="items-for-trade" id="items-for-trade-t3" required>
+                        <option value="">--choose an item--</option>
+                        <option value="salt">Salt</option>
+                        <option value="gems">Gems</option>
+                        <option value="wool">Wool</option>
+                        <option value="oil">Oil</option>
+                        <option value="spices">Spices</option>
+                        <option value="furs">Furs</option>
+                        <option value="jade">Jade</option>
+                        <option value="silk">Silk</option>
+                    </select>
+                    <input type="number" class="trader-input" id="trade-qty-t3" placeholder="qty"
+                        required="required" min="0" step="1" max="20">
+                    <input type="submit">
+                </form>
+            </div>
         </div>
+    </section>
 
-        <div class="trader" id="trader-2">
-            <h4 class="trader-title">Trader 2 - Lamed</h4>
-            <img class="trader-img" src="./img/trader-2.jpg">
-            <h4 class="t-h4">What would you like to trade?</h4>
 
-            <form action="javascript:processTrader2()" class="trade-form" id="form-t2">
-                <input type="hidden" id="trader-name-t2" value="Lamed">
-                <select name="items-for-trade" id="items-for-trade-t2" required>
-                    <option value="">--choose an item--</option>
-                    <option value="salt">Salt</option>
-                    <option value="gems">Gems</option>
-                    <option value="wool">Wool</option>
-                    <option value="oil">Oil</option>
-                    <option value="spices">Spices</option>
-                    <option value="furs">Furs</option>
-                    <option value="jade">Jade</option>
-                    <option value="silk">Silk</option>
-                </select>
-                <input type="number" class="trader-input" id="trade-qty-t2" placeholder="qty"
-                    required="required" min="0" step="1" max="20">
-                <input type="submit">
-            </form>
-        </div>
-
-        <div class="trader" id="trader-3">
-            <h4 class="trader-title">Trader 3 - Samech</h4>
-            <img class="trader-img" src="./img/trader-3.jpg">
-            <h4 class="t-h4">What would you like to trade?</h4>
-
-            <form action="javascript:processTrader3()" class="trade-form" id="form-t3">
-                <input type="hidden" id="trader-name-t3" value="Samech">
-                <select name="items-for-trade" id="items-for-trade-t3" required>
-                    <option value="">--choose an item--</option>
-                    <option value="salt">Salt</option>
-                    <option value="gems">Gems</option>
-                    <option value="wool">Wool</option>
-                    <option value="oil">Oil</option>
-                    <option value="spices">Spices</option>
-                    <option value="furs">Furs</option>
-                    <option value="jade">Jade</option>
-                    <option value="silk">Silk</option>
-                </select>
-                <input type="number" class="trader-input" id="trade-qty-t3" placeholder="qty"
-                    required="required" min="0" step="1" max="20">
-                <input type="submit">
-            </form>
-        </div>
-    </div>
 
     <div class="rumor" id="rumor"></div>
 
@@ -219,16 +246,16 @@
 
         const turnRumor = document.getElementById('rumor');
         function displayRumor() {
-            const noRumor = ['I have heard nothing.', 'I have been asking around.', 'Do we need to trade today?', 'Finding a lead will take time.'];
+            const noRumor = ['I have heard nothing.', 'I have been asking around for info.', 'Do we need to trade today? I want to nap.', 'Finding a lead will take time.'];
             let heardRumor = Math.random() < 0.5;
             // if heardRumor is true, display from global rumors
             if (heardRumor) {
-                turnRumor.innerText = rumors[currentTurn - 1].rumor;
+                turnRumor.innerText = `Servant Abed: "${rumors[currentTurn - 1].rumor}"`;
             // if heardRumor was false, present an excuse from noRumorSelection
             } else {
                 // select randome number between 0 and 3
                 let noRumorSelection = Math.floor(Math.random() * (3 - 0 + 1)) + 0;
-                turnRumor.innerText = noRumor[noRumorSelection];
+                turnRumor.innerText = `Servant Abed: "${noRumor[noRumorSelection]}"`;
             }
         }
         

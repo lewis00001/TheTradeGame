@@ -50,6 +50,11 @@ router.get('/createItemsTable', (req, res) => {
     });
 });
 
+// CREATE TABLE turn_bonus_item(turn int NOT NULL, item VARCHAR(10) NOT NULL, PRIMARY KEY(turn));
+// CREATE TABLE turn_bonus_alef(turn int NOT NULL, bonus int NOT NULL, PRIMARY KEY(turn));
+// CREATE TABLE turn_bonus_lamed(turn int NOT NULL, bonus int NOT NULL, PRIMARY KEY(turn));
+// CREATE TABLE turn_bonus_samech(turn int NOT NULL, bonus int NOT NULL, PRIMARY KEY(turn));
+
 // Create turn trades table
 router.get('/createTurnTradesTable', (req, res) => {
     let sql = 'CREATE TABLE turn_trades(turn int NOT NULL, ' +
