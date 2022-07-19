@@ -3,6 +3,8 @@ let currentTurn = 1;
 const maxTurns = 24;
 let currentScore = 0;
 const defaultTradePrice = 5;
+// store player trade items
+const playerTradeItems = [];
 // store turn trade information as a const
 const turnTrades = [];
 // store rumors information as a const
@@ -16,6 +18,7 @@ function gameStart() {
     getItemDescriptions();
     getRumors();
     displayHighScore();
+    getPlayerItems();
 }
 gameStart();
 
@@ -97,6 +100,9 @@ async function getItemDescriptions() {
 
 const turnRumor = document.getElementById('rumor');
 function displayRumor() {
+    // resets the text incase last trade was rejected
+    turnRumor.classList.remove("red-text");
+    // list of excuses - learn to do your job bro
     const noRumor = ['I have heard nothing.', 
                     'I have been asking around for info.', 
                     'Do we need to trade today? I want to nap.', 
@@ -141,8 +147,51 @@ function getCurrentTurnTrade(cItem, tName) {
     }
 }
 
-// process trade
+// ensures player has enough of an item to make the trade
+function verifyItemCount(tradeItem, tradeQty) {
+    let canTradeStuff = false;
+    playerTradeItems.forEach(element => {
+        if(element.item == tradeItem) {
+            canTradeStuff = (element.qty >= tradeQty);
+        }
+    });
+    return canTradeStuff;
+}
+
+// player item it reduced by the amount traded
+function reducePlayerItemQty(tradeItem, tradeQty) {
+    playerTradeItems.forEach(element => {
+        if(element.item == tradeItem) {
+            element.qty -= tradeQty;
+        }
+    });
+    displayPlayerItems();
+}
+
+// used when player tries to trade more than what they have
+function rejectTradeOffer(item) {
+    turnRumor.innerText = `Servant Abed: "We do not have enough ${item} to make that trade."`;
+    turnRumor.classList.add("red-text");
+}
+
+// process trades
 const tradeHistory = document.getElementById('trade-history-output');
+
+// run trade logic for turn
+function runTradeProcess(traderName, itemsForTrade, tradeQty) {
+    let canTrade = false;
+    canTrade = verifyItemCount(itemsForTrade, tradeQty);
+    if(canTrade) {
+        let priceForItems = getCurrentTurnTrade(itemsForTrade, traderName);
+        reducePlayerItemQty(itemsForTrade, tradeQty);
+        updateTradeHistory(traderName, itemsForTrade, priceForItems, tradeQty);
+        document.getElementById('form-t1').reset();
+        document.getElementById('form-t2').reset();
+        document.getElementById('form-t3').reset();
+    } else {
+        rejectTradeOffer(itemsForTrade);
+    }
+}
 
 // trader 1
 function processTrader1() {
@@ -150,10 +199,7 @@ function processTrader1() {
     const traderName = document.getElementById('trader-name-t1').value;
     const itemsForTrade = document.getElementById('items-for-trade-t1').value;
     const tradeQty = document.getElementById('trade-qty-t1').value;
-    let priceForItems = getCurrentTurnTrade(itemsForTrade, traderName);
-    console.log("price for item trade: " + priceForItems);
-    updateTradeHistory(traderName, itemsForTrade, priceForItems, tradeQty);
-    document.getElementById('form-t1').reset();
+    runTradeProcess(traderName, itemsForTrade, tradeQty);
 }
 // trader 2
 function processTrader2() {
@@ -161,10 +207,7 @@ function processTrader2() {
     const traderName = document.getElementById('trader-name-t2').value;
     const itemsForTrade = document.getElementById('items-for-trade-t2').value;
     const tradeQty = document.getElementById('trade-qty-t2').value;
-    let priceForItems = getCurrentTurnTrade(itemsForTrade, traderName);
-    console.log("price for item trade: " + priceForItems);
-    updateTradeHistory(traderName, itemsForTrade, priceForItems, tradeQty);
-    document.getElementById('form-t2').reset();
+    runTradeProcess(traderName, itemsForTrade, tradeQty);
 }
 // trader 3
 function processTrader3() {
@@ -172,10 +215,7 @@ function processTrader3() {
     const traderName = document.getElementById('trader-name-t3').value;
     const itemsForTrade = document.getElementById('items-for-trade-t3').value;
     const tradeQty = document.getElementById('trade-qty-t3').value;
-    let priceForItems = getCurrentTurnTrade(itemsForTrade, traderName);
-    console.log("price for item trade: " + priceForItems);
-    updateTradeHistory(traderName, itemsForTrade, priceForItems, tradeQty);
-    document.getElementById('form-t3').reset();
+    runTradeProcess(traderName, itemsForTrade, tradeQty);
 }
 
 async function updateTradeHistory(traderName, itemsForTrade, priceForItems, tradeQty) {
@@ -250,13 +290,26 @@ async function displayTradeHistoryData() {
     });
 }
 
-// display player items
-const playerItems = document.getElementById('player-items-output');
-async function displayPlayerItems() {
+// get player items and load them in global var
+async function getPlayerItems() {
     const res = await fetch('/getAllPlayerItems');
     const data = await res.json();
     data.elements.forEach(element => {
-        // loop through all returned items and output them to the UI
+        let obj = {};
+        obj['item'] = element.item;
+        obj['qty'] = element.qty;
+        playerTradeItems.push(obj);
+    });
+    displayPlayerItems();
+}
+
+// display player items
+const playerItems = document.getElementById('player-items-output');
+async function displayPlayerItems() {
+    // clear table contents
+    playerItems.innerHTML = '';
+    // loop through all items and output them to the UI
+    playerTradeItems.forEach(element => {
         // create containing div
         let container = document.createElement('div');
         container.setAttribute('class', 'data-row');
@@ -273,4 +326,3 @@ async function displayPlayerItems() {
         container.appendChild(quantDiv);
     });
 }
-displayPlayerItems();

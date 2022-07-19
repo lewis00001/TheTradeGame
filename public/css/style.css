@@ -124,6 +124,11 @@ section {
     line-height: 1.4em;
 }
 
+.red-text {
+    color: rgb(180, 0, 0);
+    font-weight: 800;
+}
+
 #score {
     background-color: #40798c;
     color: aliceblue;
