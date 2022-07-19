@@ -131,7 +131,7 @@ router.get('/getTableData/:tableName', async (req, res) => {
 // getHighScore helper
 const selectHighestScore = () => {
     return new Promise((resolve, reject) => {
-        db.query(`SELECT item_id, item, qty FROM player_items_list;`
+        db.query(`SELECT player_name, max(score) AS score FROM high_score;`
         , (error, elements) => {
             if (error) {
                 return reject(error);

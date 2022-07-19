@@ -2,7 +2,7 @@ function gameStart() {
     purgeTradeHistory();
     getTurnTrades();
     getRumors();
-    getHighScore();
+    displayHighScore();
 }
 gameStart();
 
@@ -50,6 +50,18 @@ async function getRumors() {
         rumors.push(obj);
     });
     displayRumor();
+}
+
+// get the high score from past players
+const scoreSpan = document.getElementById('high-score');
+async function displayHighScore() {
+    const res = await fetch('/getHighScore');
+    const data = await res.json();
+    data.elements.forEach(element => {
+        let p_name = element.player_name;
+        let score = element.score;
+        scoreSpan.innerHTML = `(high-score: ${score} - ${p_name})`;
+    });
 }
 
 const turnRumor = document.getElementById('rumor');
