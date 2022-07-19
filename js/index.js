@@ -1,3 +1,15 @@
+// this tracks the current turn and is used to calculate trade bonuses
+let currentTurn = 1;
+const maxTurns = 24;
+let currentScore = 0;
+const defaultTradePrice = 5;
+// store turn trade information as a const
+const turnTrades = [];
+// store rumors information as a const
+const rumors = [];
+// store item descriptions as a const
+const itemDescriptions = [];
+
 function gameStart() {
     purgeTradeHistory();
     getTurnTrades();
@@ -15,16 +27,6 @@ async function purgeTradeHistory() {
         .then(text => console.log(text)
     );
 }
-
-// this tracks the current turn and is used to calculate trade bonuses
-let currentTurn = 1;
-const maxTurns = 24;
-// store turn trade information as a const
-const turnTrades = [];
-// store rumors information as a const
-const rumors = [];
-// store item descriptions as a const
-const itemDescriptions = [];
 
 // get turn trades and add them to a global var
 async function getTurnTrades() {
@@ -67,6 +69,20 @@ async function displayHighScore() {
     });
 }
 
+// increases the score and calls the display score function
+function calcCurrentScore(priceForItems, tradeQty) {
+    let increase = priceForItems * tradeQty;
+    currentScore += increase;
+    displayCurrentScore();
+}
+
+// display the current player score
+const currentScoreSpan = document.getElementById('current-score');
+function displayCurrentScore() {
+    currentScoreSpan.innerHTML = `Current Score: ${currentScore}`;
+}
+
+
 // get item descriptions and load them in global var
 async function getItemDescriptions() {
     const res = await fetch('/getDescriptions');
@@ -108,14 +124,21 @@ function displayItemDescription(tItem) {
     });
 }
 
-
-
-
-
-
-
-function getCurrentTurnTrade() {
-    console.log(turnTrades[currentTurn - 1].turn);
+function getCurrentTurnTrade(cItem, tName) {
+    // check to see if the item traded matches turn bonus item
+    if(cItem == turnTrades[currentTurn - 1].item) {
+        // it the item is a turn bonus item, get the traders bonus amount
+        switch(tName) {
+            case 'Alef':
+              return turnTrades[currentTurn - 1].alefBonus + defaultTradePrice;
+            case 'Lamed':
+                return turnTrades[currentTurn - 1].lamedBonus + defaultTradePrice;
+            case 'Samech':
+                return turnTrades[currentTurn - 1].samechBonus + defaultTradePrice;
+        }
+    } else {
+        return defaultTradePrice;
+    }
 }
 
 // process trade
@@ -127,7 +150,9 @@ function processTrader1() {
     const traderName = document.getElementById('trader-name-t1').value;
     const itemsForTrade = document.getElementById('items-for-trade-t1').value;
     const tradeQty = document.getElementById('trade-qty-t1').value;
-    updateTradeHistory(traderName, itemsForTrade, tradeQty);
+    let priceForItems = getCurrentTurnTrade(itemsForTrade, traderName);
+    console.log("price for item trade: " + priceForItems);
+    updateTradeHistory(traderName, itemsForTrade, priceForItems, tradeQty);
     document.getElementById('form-t1').reset();
 }
 // trader 2
@@ -136,7 +161,9 @@ function processTrader2() {
     const traderName = document.getElementById('trader-name-t2').value;
     const itemsForTrade = document.getElementById('items-for-trade-t2').value;
     const tradeQty = document.getElementById('trade-qty-t2').value;
-    updateTradeHistory(traderName, itemsForTrade, tradeQty);
+    let priceForItems = getCurrentTurnTrade(itemsForTrade, traderName);
+    console.log("price for item trade: " + priceForItems);
+    updateTradeHistory(traderName, itemsForTrade, priceForItems, tradeQty);
     document.getElementById('form-t2').reset();
 }
 // trader 3
@@ -145,19 +172,22 @@ function processTrader3() {
     const traderName = document.getElementById('trader-name-t3').value;
     const itemsForTrade = document.getElementById('items-for-trade-t3').value;
     const tradeQty = document.getElementById('trade-qty-t3').value;
-    updateTradeHistory(traderName, itemsForTrade, tradeQty);
+    let priceForItems = getCurrentTurnTrade(itemsForTrade, traderName);
+    console.log("price for item trade: " + priceForItems);
+    updateTradeHistory(traderName, itemsForTrade, priceForItems, tradeQty);
     document.getElementById('form-t3').reset();
 }
 
-async function updateTradeHistory(traderName, itemsForTrade, tradeQty) {
+async function updateTradeHistory(traderName, itemsForTrade, priceForItems, tradeQty) {
     // insert new data to trade history
-    const res = await fetch(`/addToTradeHistory/${currentTurn}&${traderName}&${itemsForTrade}&${5}&${tradeQty}`)
+    const res = await fetch(`/addToTradeHistory/${currentTurn}&${traderName}&${itemsForTrade}&${priceForItems}&${tradeQty}`)
         .then(res => res.text())
         .then(text => console.log(text)
     );
     updateCurrentTurnCount();
     displayTradeHistoryData();
     displayItemDescription(itemsForTrade);
+    calcCurrentScore(priceForItems, tradeQty);
     displayRumor();
 }
 
