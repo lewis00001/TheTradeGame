@@ -141,12 +141,39 @@ const selectHighestScore = () => {
     });
  };
 
-// Select all player items
+// Select the highest score from the list
 // *** used by displayHighScore()
 // --------------------------------------------------
 router.get('/getHighScore', async (req, res) => {
     try {
         const results = await selectHighestScore();
+        res.status(200).json({elements : results});
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
+// getItemDescriptions helper
+const selectItemDescriptions = () => {
+    return new Promise((resolve, reject) => {
+        db.query(`SELECT i.item, id.description FROM item_description id ` +
+                `LEFT JOIN items i ON i.id = id.item_id;`
+        , (error, elements) => {
+            if (error) {
+                return reject(error);
+            }
+            return resolve(elements);
+        });
+    });
+ };
+
+// Select all player items
+// *** used by getItemDescriptions()
+// --------------------------------------------------
+router.get('/getDescriptions', async (req, res) => {
+    try {
+        const results = await selectItemDescriptions();
         res.status(200).json({elements : results});
     } catch (error) {
         console.log(error);

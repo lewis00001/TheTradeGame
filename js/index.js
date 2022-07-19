@@ -1,6 +1,7 @@
 function gameStart() {
     purgeTradeHistory();
     getTurnTrades();
+    getItemDescriptions();
     getRumors();
     displayHighScore();
 }
@@ -18,10 +19,12 @@ async function purgeTradeHistory() {
 // this tracks the current turn and is used to calculate trade bonuses
 let currentTurn = 1;
 const maxTurns = 24;
-// get the turn trade information and store it a const
+// store turn trade information as a const
 const turnTrades = [];
-// get the rumors information and store it a const
+// store rumors information as a const
 const rumors = [];
+// store item descriptions as a const
+const itemDescriptions = [];
 
 // get turn trades and add them to a global var
 async function getTurnTrades() {
@@ -64,6 +67,18 @@ async function displayHighScore() {
     });
 }
 
+// get item descriptions and load them in global var
+async function getItemDescriptions() {
+    const res = await fetch('/getDescriptions');
+    const data = await res.json();
+    data.elements.forEach(element => {
+        let obj = {};
+        obj['item'] = element.item;
+        obj['description'] = element.description;
+        itemDescriptions.push(obj);
+    });
+}
+
 const turnRumor = document.getElementById('rumor');
 function displayRumor() {
     const noRumor = ['I have heard nothing.', 
@@ -81,6 +96,23 @@ function displayRumor() {
         turnRumor.innerText = `Servant Abed: "${noRumor[noRumorSelection]}"`;
     }
 }
+
+// displays information about the item last traded 
+const itemInfo = document.getElementById('item-info');
+function displayItemDescription(tItem) {
+    // loop through and find the description that goes with the item traded
+    itemDescriptions.forEach(element => {
+        if(tItem == element.item) {
+            itemInfo.innerHTML = `You traded ${tItem} - ${element.description}`;
+        }
+    });
+}
+
+
+
+
+
+
 
 function getCurrentTurnTrade() {
     console.log(turnTrades[currentTurn - 1].turn);
@@ -118,16 +150,14 @@ function processTrader3() {
 }
 
 async function updateTradeHistory(traderName, itemsForTrade, tradeQty) {
-    // ensure data is passed to function
-    console.log(`Trade Details: ${traderName}: ${itemsForTrade}: ${tradeQty}`);
     // insert new data to trade history
-    console.log(`current turn: ${currentTurn}`);
     const res = await fetch(`/addToTradeHistory/${currentTurn}&${traderName}&${itemsForTrade}&${5}&${tradeQty}`)
         .then(res => res.text())
         .then(text => console.log(text)
     );
     updateCurrentTurnCount();
     displayTradeHistoryData();
+    displayItemDescription(itemsForTrade);
     displayRumor();
 }
 
