@@ -1,0 +1,148 @@
+/* font-family: 'PT Sans Narrow', sans-serif;
+font-family: 'Stoke', serif; */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    background-color: #1f363d;
+    color: aliceblue;
+    font-family: 'PT Sans Narrow', sans-serif;
+    padding-bottom: 20px;
+}
+
+h2, h4 {
+    width: 100%;
+    font-family: 'Stoke', serif;
+}
+
+h4 {
+    margin-top: 0;
+}
+
+section {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.section-1 {
+    width: 100%;
+}
+
+.section-2 {
+    width: 100%;
+}
+
+.data-output-section {
+    background-color: bisque;
+}
+
+.data-output-divs {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+
+.trade-data-divs {
+    background-color: rgba(250, 250, 250, 0.6);
+    padding: 1em;
+    color: #1f363d;
+    margin-top: 15px;
+}
+
+.trader-section {
+    padding: 1em;
+    background-color: #cfe0c3;
+    display: flex;
+    justify-content: space-around;
+}
+
+.trader {
+    min-width: 80px;
+    min-height: 120px;
+    padding: 0.5em;
+    background-color: #9ec1a3;
+    filter: drop-shadow(4px 4px 8px #444);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.trader-title {
+    text-align: center;
+    font-family: 'Stoke', serif;
+    color: #1f363d;
+}
+
+.t-h4 {
+    margin-top: 12px;
+    text-align: center;
+    color: #1f363d;
+    font-family: 'PT Sans Narrow', sans-serif
+}
+
+.trader-img {
+    width: 150px;
+    margin: 0 auto;
+}
+
+.data-heading {
+    font-weight: 800;
+    padding-bottom: 4px;
+}
+
+.data-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.data-cell {
+    min-width: 70px;
+}
+
+.button-options {
+    margin: 0 auto 10px auto;
+}
+
+.bold {
+    font-weight: 800;
+}
+
+.banner {
+    font-size: large;
+    font-weight: 800;
+    text-align: center;
+    padding: 0.5em;
+    margin: auto;
+    color: black;
+}
+
+.instructions {
+    padding-bottom: 1em;
+    letter-spacing: 0.08em;
+    line-height: 1.4em;
+}
+
+#score {
+    background-color: #40798c;
+    color: aliceblue;
+    letter-spacing: 0.06em;
+}
+
+#h-score {
+    font-size: larger;
+    letter-spacing: 0.08em;
+}
+
+#rumor {
+    background-color: bisque;
+}
+
+#item-info {
+    background-color: #9ec1a3;
+}
+
+#player-items { 
+    display: inline-block;
+}
