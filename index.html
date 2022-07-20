@@ -33,10 +33,10 @@
                     <select name="items-for-trade" id="items-for-trade-t1" required>
                         <option value="">--choose item--</option>
                         <option value="salt">Salt</option>
-                        <option value="gems">Gems</option>
-                        <option value="wool">Wool</option>
                         <option value="oil">Oil</option>
                         <option value="spices">Spices</option>
+                        <option value="gems">Gems</option>
+                        <option value="wool">Wool</option>
                         <option value="furs">Furs</option>
                         <option value="jade">Jade</option>
                         <option value="silk">Silk</option>
@@ -57,10 +57,10 @@
                     <select name="items-for-trade" id="items-for-trade-t2" required>
                         <option value="">--choose item--</option>
                         <option value="salt">Salt</option>
-                        <option value="gems">Gems</option>
-                        <option value="wool">Wool</option>
                         <option value="oil">Oil</option>
                         <option value="spices">Spices</option>
+                        <option value="gems">Gems</option>
+                        <option value="wool">Wool</option>
                         <option value="furs">Furs</option>
                         <option value="jade">Jade</option>
                         <option value="silk">Silk</option>
@@ -81,10 +81,10 @@
                     <select name="items-for-trade" id="items-for-trade-t3" required>
                         <option value="">--choose item--</option>
                         <option value="salt">Salt</option>
-                        <option value="gems">Gems</option>
-                        <option value="wool">Wool</option>
                         <option value="oil">Oil</option>
                         <option value="spices">Spices</option>
+                        <option value="gems">Gems</option>
+                        <option value="wool">Wool</option>
                         <option value="furs">Furs</option>
                         <option value="jade">Jade</option>
                         <option value="silk">Silk</option>
@@ -132,6 +132,18 @@
             </div>
         </div>
     </section>
+
+    <div class="modal">
+        <div class="modal-content">
+            <span class="close-button">X</span>
+            <h3 id="modal-output"></h3>
+            <form action="javascript:saveHighScore()" class="score-form" id="score-form">
+                <input type="text" class="modal-input" id="modal-input" placeholder="name"
+                    required="required">
+                <input type="submit">
+            </form>
+        </div>
+    </div>
 
     <script src="./js/index.js"></script>
 </body>

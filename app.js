@@ -57,7 +57,7 @@ router.get('/addToTradeHistory/:currentTurn&:traderName&:item&:sellPrice&:numIte
     let sql = 'INSERT INTO trade_history SET ?';
     let query = db.query(sql, post, (err, result) => {
         if(err) throw err;
-        console.log("Trade History Event Added - Affected Rows: " + result.affectedRows);
+        //console.log("Trade History Event Added - Affected Rows: " + result.affectedRows);
         res.send(result);
     });
 });
@@ -131,7 +131,7 @@ router.get('/getTableData/:tableName', async (req, res) => {
 // getHighScore helper
 const selectHighestScore = () => {
     return new Promise((resolve, reject) => {
-        db.query(`SELECT player_name, max(score) AS score FROM high_score;`
+        db.query(`SELECT * FROM high_score WHERE score = (SELECT max(score) FROM high_score);`
         , (error, elements) => {
             if (error) {
                 return reject(error);
@@ -152,6 +152,18 @@ router.get('/getHighScore', async (req, res) => {
         console.log(error);
         res.sendStatus(500);
     }
+});
+
+// Add new high score to the list
+// *** used by saveHighScore()
+// --------------------------------------------------
+router.get('/saveHighScore/:name&:score', (req, res) => {
+    let post = {player_name:req.params.name, score:req.params.score};
+    let sql = 'INSERT INTO high_score SET ?';
+    let query = db.query(sql, post, (err, result) => {
+        if(err) throw err;
+        res.send('Score Added');
+    });
 });
 
 // getItemDescriptions helper

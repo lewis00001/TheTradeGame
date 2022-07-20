@@ -99,6 +99,7 @@ async function getItemDescriptions() {
 }
 
 const turnRumor = document.getElementById('rumor');
+// displays a rumor or a random excuse
 function displayRumor() {
     // resets the text incase last trade was rejected
     turnRumor.classList.remove("red-text");
@@ -174,13 +175,13 @@ function rejectTradeOffer(item) {
     turnRumor.classList.add("red-text");
 }
 
-// process trades
+// process trades 
 const tradeHistory = document.getElementById('trade-history-output');
 
 // run trade logic for turn
 function runTradeProcess(traderName, itemsForTrade, tradeQty) {
-    let canTrade = false;
-    canTrade = verifyItemCount(itemsForTrade, tradeQty);
+    let canTrade = verifyItemCount(itemsForTrade, tradeQty);
+    // if the player has enough of the selected items, make trade
     if(canTrade) {
         let priceForItems = getCurrentTurnTrade(itemsForTrade, traderName);
         reducePlayerItemQty(itemsForTrade, tradeQty);
@@ -224,23 +225,52 @@ async function updateTradeHistory(traderName, itemsForTrade, priceForItems, trad
         .then(res => res.text())
         .then(text => console.log(text)
     );
-    updateCurrentTurnCount();
     displayTradeHistoryData();
     displayItemDescription(itemsForTrade);
     calcCurrentScore(priceForItems, tradeQty);
+    updateCurrentTurnCount();
+    countPlayerItems();
     displayRumor();
 }
 
+// if palyer runs out of turns
 function updateCurrentTurnCount() {
-    if(currentTurn <= maxTurns) {
+    if(currentTurn < maxTurns) {
         currentTurn++;
     } else {
-        triggerEndGame();
+        triggerEndGame("You've reached your max amount of turns.");
     }
 }
 
-function triggerEndGame() {
-    alert("You've reached you max amount of turns. Game over!");
+// if the player runs out of items
+function countPlayerItems() {
+    let itemsRemaing = 0;
+    playerTradeItems.forEach(element => {
+        itemsRemaing += element.qty;
+    });
+    // check to see if player is out of items
+    if(itemsRemaing == 0) {
+        triggerEndGame(`You completed the game!`);
+    }
+}
+
+// end game and trigger modal
+function triggerEndGame(message) {
+    let modalOutput = document.getElementById('modal-output');
+    modalOutput.innerText = `${message} Please enter your name to log your score of ${currentScore}.`;
+    
+    toggleModal();
+}
+
+// makes the call to save the score fro mmodal imput
+async function saveHighScore() {
+    // get the player name from the modal form
+    let sPlayerName = document.getElementById('modal-input').value;
+    const res = await fetch(`/saveHighScore/${sPlayerName}&${currentScore}`)
+        .then(res => res.text())
+        .then(text => console.log(text)
+    );
+    toggleModal();
 }
 
 // update trade history on the html page
@@ -326,3 +356,20 @@ async function displayPlayerItems() {
         container.appendChild(quantDiv);
     });
 }
+
+// modal
+const modal = document.querySelector(".modal");
+const closeButton = document.querySelector(".close-button");
+// all the modal code hangs out around here
+function toggleModal() {
+    modal.classList.toggle("show-modal");
+}
+
+function windowOnClick(event) {
+    if (event.target === modal) {
+        toggleModal();
+    }
+}
+
+closeButton.addEventListener("click", toggleModal);
+window.addEventListener("click", windowOnClick);
