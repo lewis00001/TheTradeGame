@@ -1,1 +1,1 @@
-# mySQL_TradingGame
+# The Trade Game
